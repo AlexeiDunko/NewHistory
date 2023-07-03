@@ -1,8 +1,13 @@
 package com.filesystem;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class FileSystem {
-        public Folder root;
+        public Folder root = new Folder("root");
 
         public Object add(String path) {
             String[] parts = path.split("/");
@@ -24,6 +29,23 @@ public class FileSystem {
             }
             return null;
         }
+
+    public String print() {
+        try {
+            Path filePath = Paths.get("root/folder/file.txt");
+            List<String> lines = Files.readAllLines(filePath);
+            StringBuilder content = new StringBuilder();
+            for (String line : lines) {
+                content.append(line).append("\n");
+            }
+            return content.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+
 
         private FileSystemObject createObject(String name, boolean isFile) {
             if (isFile) {

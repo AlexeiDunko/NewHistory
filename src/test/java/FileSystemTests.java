@@ -1,69 +1,61 @@
 import com.filesystem.FileSystem;
-import com.filesystem.Folder;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.UserPrincipalLookupService;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class FileSystemTests {
     // Создание файловой системы
     private FileSystem fs;
 
-    @Before
-    public void init() {
-        // Создание файловой системы
-        fs = new FileSystem();
-    }
+    /*
+    Один тест
+    Создаем структуру -> получаем структуру и сравниваем
+     */
 
     @Test
-    public void addNewFileToFolder() {
+    public void testPrintStructureShouldReturnWithOneFile() {
         // Добавление нового файла в существующую папку
-        fs.add("folder1/file1.txt");
-        String expectedName = "file1.txt";
-        assertEquals(expectedName, fs.get("folder1").get(expectedName).getName());
-    }
-
-    @Test
-    public void addNewFolderToFolder() {
-        // Добавление новой папки в существующую папку
-        fs.add("folder1/folder2");
-        String expectedName = "folder2";
-        assertEquals(expectedName, fs.get("folder1").get(expectedName).getName());
-    }
-
-    @Test
-    public void addNewFileToNewFolder() {
-        // Добавление нового файла в несуществующую папку (должна создаться вся иерархия)
         fs.add("folder1/folder2/file1.txt");
-        String expectedName = "file1.txt";
-        assertEquals(expectedName, fs.get("folder1/folder2").get(expectedName).getName());
-
-        fs.add("folder3/newFile.txt");
-        expectedName = "newFile.txt";
-        assertEquals(expectedName, fs.get("folder3").get(expectedName).getName());
+        String expectedName = """
+                root/
+                  folder1/
+                    file.txt
+                """;
+        assertEquals(expectedName, fs.print());
     }
 
     @Test
-    public void addFileWithSameNameAsExistingFile() {
-        // Добавление нового файла с тем же именем, что и у существующего файла (должен вернуть null)
-        fs.add("folder4/file1.txt");
-        assertNull(fs.add("folder4/file1.txt"));
+    public void testPrintStructureShouldReturnWithTwoFiles() {
+        // Добавление нового файла в существующую папку
+        fs.add("folder1/folder2/file1.txt");
+        String expectedName = """
+                root/
+                  folder1/
+                    file.txt
+                    file2.txt
+                """;
+        assertEquals(expectedName, fs.print());
     }
 
     @Test
-    public void addFileWithSameNameAsExistingFolder() {
-        // Создание необходимых объектов
-        Folder folder = new Folder("folder");
-        fs.root = folder;
-
-        Folder existingFolder = new Folder("folder1");
-        folder.add(existingFolder);
-
-        // Добавление файла с тем же именем, что и у существующей папки
-        assertNull(fs.add("folder1"));
-
-        // Проверка, что папка не была заменена на файл
-        String expectedName = "folder1";
-        assertTrue(fs.get("folder").get(expectedName) instanceof Folder);
+    public void testPrintStructureShouldReturnWithTwoFoldersTwoFiles() {
+        // Добавление нового файла в существующую папку
+        fs.add("folder1/folder2/file1.txt");
+        String expectedName = """
+                root/
+                  folder2/
+                    file.txt
+                  folder1/
+                    file2.txt
+                """;
+        assertEquals(expectedName, fs.print());
     }
 }

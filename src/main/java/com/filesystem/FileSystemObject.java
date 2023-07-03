@@ -3,6 +3,7 @@ package com.filesystem;
 public abstract class FileSystemObject {
     protected String name;
 
+
     public FileSystemObject(String name){
         this.name = name;
     }
@@ -10,4 +11,6 @@ public abstract class FileSystemObject {
     public String getName(){
         return name;
     }
+
+
 }
