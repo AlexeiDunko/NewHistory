@@ -1,6 +1,6 @@
 package com.filesystem;
 
- public class File extends FileSystemObject {
+ public class File extends FileSystemObject{
     private String extension;
 
     public File(String name, String extension) {

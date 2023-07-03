@@ -1,11 +1,5 @@
 package com.filesystem;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 public class FileSystem {
         public Folder root = new Folder("root");
 
@@ -31,17 +25,20 @@ public class FileSystem {
         }
 
     public String print() {
-        try {
-            Path filePath = Paths.get("root/folder/file.txt");
-            List<String> lines = Files.readAllLines(filePath);
-            StringBuilder content = new StringBuilder();
-            for (String line : lines) {
-                content.append(line).append("\n");
+        StringBuilder sb = new StringBuilder();
+        printFolder(root, " ", sb);
+        return sb.toString();
+    }
+
+    private void printFolder(Folder folder, String indent, StringBuilder sb) {
+        sb.append(indent).append(folder.getName()).append("/").append("\n");
+
+        for (FileSystemObject item : folder.getContents()) {
+            if (item instanceof Folder) {
+                printFolder((Folder)item, indent + "  ", sb);
+            } else {
+                sb.append(indent).append("  ").append(item.getName()).append("\n");
             }
-            return content.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
         }
     }
 
